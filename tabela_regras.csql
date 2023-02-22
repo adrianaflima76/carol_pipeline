@@ -1,0 +1,128 @@
+
+/* criando as regras de acordo com o mapeamento SENAI */
+/* o objetivo é buscar informações inconsistentes e/ou fora do padrão */
+/* buscando registros válidos para a análise de predição: curso em andamento 2019 a 2023 */
+
+WITH regras as (
+SELECT distinct 
+DR,
+count(*) as matricula_r,
+countif(safe_cast(codarea as NUMERIC) > 99) as codarea_r,
+countif(codmodalidadecurso NOT IN('05','11','15','21','22','31','32','41','57','58','67','71',
+        '72','74','76','81','82','87','91','92','93')) as codmodalidadecurso_r,
+countif(tipo_ambiente NOT IN('1','2','3','4','5')) as tipo_ambiente_r,
+
+countif(safe_cast(idade as NUMERIC) < 14 or safe_cast(idade as NUMERIC) > 99) as idade_r,
+countif(sexo NOT IN('M','F')) as sexo_r_1,
+countif(raca_cor_aluno NOT IN('1','2','3','4','5','6')) as raca_cor_aluno_r,
+countif(escola_origem NOT IN('0','1','2','3','4','9')) as escola_origem_r,
+countif(sit_ocupacional_aluno NOT IN('1','2','3','4','5','6','7','8','9')) as sit_ocupacional_aluno_r,
+countif(niv_escolaridade_aluno NOT IN('0','1','2','3','4','5','6','7')) as niv_escolaridade_aluno_r,
+countif(tipo_financiamento NOT IN('0','001','002','003','004','1','101','102','103','2','3','4') AND 
+  (tipo_financiamento < '400' OR tipo_financiamento > '499')) as tipo_financiamento_r,
+
+countif(regexp_contains(lower(chescolar), '.0000|h')) as chescolar_r
+
+  FROM 
+   (SELECT *
+   FROM
+   (select 'AC' as DR, matricula, codarea, codmodalidadecurso, tipo_ambiente, chescolar, idade, 
+   codstatus, sexo, raca_cor_aluno, escola_origem, sit_ocupacional_aluno, niv_escolaridade_aluno, tipo_financiamento, 
+   dt_entrada, tipo_acao
+   from deduplicated_stg_senai_evasao_prod_carol_dados_sge_ac
+
+  UNION ALL  
+   select 'AL' as DR, matricula, codarea, codmodalidadecurso, tipo_ambiente, chescolar, idade, 
+   codstatus, sexo, raca_cor_aluno, escola_origem, sit_ocupacional_aluno, niv_escolaridade_aluno, tipo_financiamento, 
+   dt_entrada, tipo_acao
+   from deduplicated_stg_senai_evasao_prod_carol_dados_sge_al
+
+  UNION ALL  
+   select 'AP' as DR, matricula, codarea, codmodalidadecurso, tipo_ambiente, chescolar, idade, 
+   codstatus, sexo, raca_cor_aluno, escola_origem, sit_ocupacional_aluno, niv_escolaridade_aluno, tipo_financiamento, 
+   dt_entrada, tipo_acao
+   from deduplicated_stg_senai_evasao_prod_carol_dados_sge_ap
+
+  UNION ALL  
+   select 'BA' as DR, matricula, codarea, codmodalidadecurso, tipo_ambiente, chescolar, idade, 
+   codstatus, sexo, raca_cor_aluno, escola_origem, sit_ocupacional_aluno, niv_escolaridade_aluno, tipo_financiamento, 
+   dt_entrada, tipo_acao
+   from deduplicated_stg_senai_evasao_prod_carol_dados_sge_ba
+
+  UNION ALL  
+   select 'CT' as DR, matricula, codarea, codmodalidadecurso, tipo_ambiente, chescolar, idade, 
+   codstatus, sexo, raca_cor_aluno, escola_origem, sit_ocupacional_aluno, niv_escolaridade_aluno, tipo_financiamento, 
+   dt_entrada, tipo_acao
+   from deduplicated_stg_senai_evasao_prod_carol_dados_sge_ct
+
+  UNION ALL  
+   select 'DF' as DR, matricula, codarea, codmodalidadecurso, tipo_ambiente, chescolar, idade, 
+   codstatus, sexo, raca_cor_aluno, escola_origem, sit_ocupacional_aluno, niv_escolaridade_aluno, tipo_financiamento, 
+   dt_entrada, tipo_acao
+   from deduplicated_stg_senai_evasao_prod_carol_dados_sge_df
+
+  UNION ALL  
+   select 'MS' as DR, matricula, codarea, codmodalidadecurso, tipo_ambiente, chescolar, idade, 
+   codstatus, sexo, raca_cor_aluno, escola_origem, sit_ocupacional_aluno, niv_escolaridade_aluno, tipo_financiamento, 
+   dt_entrada, tipo_acao
+   from deduplicated_stg_senai_evasao_prod_carol_dados_sge_ms
+
+  UNION ALL  
+   select 'MT' as DR, matricula, codarea, codmodalidadecurso, tipo_ambiente, chescolar, idade, 
+   codstatus, sexo, raca_cor_aluno, escola_origem, sit_ocupacional_aluno, niv_escolaridade_aluno, tipo_financiamento, 
+   dtentrada as dt_entrada, tipo_acao
+   from deduplicated_stg_senai_evasao_prod_carol_dados_sge_mt
+
+  UNION ALL  
+   select 'PB' as DR, matricula, codarea, codmodalidadecurso, tipo_ambiente, chescolar, idade, 
+   codstatus, sexo, raca_cor_aluno, escola_origem, sit_ocupacional_aluno, niv_escolaridade_aluno, tipo_financiamento, 
+   dt_entrada, tipo_acao
+   from deduplicated_stg_senai_evasao_prod_carol_dados_sge_pb
+
+  UNION ALL  
+   select 'PR' as DR, matricula, codarea, codmodalidadecurso, tipo_ambiente, chescolar, idade, 
+   codstatus, sexo, raca_cor_aluno, escola_origem, sit_ocupacional_aluno, niv_escolaridade_aluno, tipo_financiamento, 
+   dt_entrada, tipo_acao
+   from deduplicated_stg_senai_evasao_prod_carol_dados_sge_pr
+
+  UNION ALL  
+   select 'RS' as DR, matricula, codarea, codmodalidadecurso, tipo_ambiente, chescolar, idade, 
+   codstatus, sexo, raca_cor_aluno, escola_origem, sit_ocupacional_aluno, niv_escolaridade_aluno, tipo_financiamento, 
+   dtentrada as dt_entrada, tipo_acao
+   from deduplicated_stg_senai_evasao_prod_carol_dados_sge_rs
+)
+  
+   WHERE  
+      (codstatus IN(1.0, 5.0, 6.0, 31.0, 32.0) AND 
+      tipo_acao = '1' AND
+      dt_entrada > '2018-12-31')
+  )   
+
+      group by DR
+      order by DR      
+)
+      
+/* teste com metadados para pipeline */
+
+
+SELECT stg.DR,
+regras.matricula_r,
+regras.codarea_r,
+regras.codmodalidadecurso_r,
+regras.tipo_ambiente_r,
+regras.idade_r,
+regras.sexo_r_1, 
+regras.raca_cor_aluno_r,
+regras.escola_origem_r,
+regras.sit_ocupacional_aluno_r,
+regras.niv_escolaridade_aluno_r,
+regras.tipo_financiamento_r,
+regras.chescolar_r
+
+
+--metadata--
+
+from stg_senai_evasao_result_202301_dr as stg
+     left join regras 
+     on stg.DR = regras.DR
+  order by DR 
