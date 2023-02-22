@@ -1,0 +1,13 @@
+/* criando datamodel com perfil do aluno */
+
+SELECT 
+count(stg.matricula) as total,
+stg.sexo,
+stg.raca_cor,
+stg.unidade
+
+ --metadata-- 
+ from stg_testeescel_aluno_data as stg 
+    group by unidade sexo raca_cor
+    order by unidade sexo raca_cor      
+      
