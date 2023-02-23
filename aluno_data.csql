@@ -1,13 +1,22 @@
 /* criando datamodel com perfil do aluno */
 
-SELECT 
-count(stg.matricula) as total,
-stg.sexo,
-stg.raca_cor,
-stg.unidade
+WITH aluno as (
+SELECT distinct 
+count(matricula) as total,
+raca_cor
 
- --metadata-- 
- from stg_testeescel_aluno_data as stg 
-    group by unidade sexo raca_cor
-    order by unidade sexo raca_cor      
+FROM stg_testeescel_aluno_data
+group by raca_cor
+)
+
+
+SELECT stg.raca_cor,
+aluno.total
+
+
+--metadata--
+
+from stg_testeescel_aluno_raca as stg
+     left join aluno 
+     on stg.raca_cor = aluno.raca_cor
       
